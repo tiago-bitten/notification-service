@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/tiago-bitten/notification-service/internal/project/domain/project"
-	sharedMongo "github.com/tiago-bitten/notification-service/internal/shared/mongo"
+	"github.com/tiago-bitten/notification-service/internal/shared/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -36,7 +36,10 @@ func (r *MongoProjectRepository) FindAll() ([]project.Project, error) {
 	}
 
 	err = cursor.All(ctx, &projects)
-	return projects, err
+	if err != nil {
+		return nil, err
+	}
+	return projects, nil
 }
 
 func (r *MongoProjectRepository) FindByID(id string) (*project.Project, error) {
@@ -53,6 +56,12 @@ func (r *MongoProjectRepository) FindByName(name string) (*project.Project, erro
 	defer cancel()
 
 	var p project.Project
-	err := r.collection.FindOne(ctx, bson.M{"name": name}).Decode(&p)
-	return &p, err
+	found, err := sharedMongo.FindOneDocument(ctx, r.collection, bson.M{"name": name}, &p)
+	if err != nil {
+		return nil, err
+	}
+	if !found {
+		return nil, nil
+	}
+	return &p, nil
 }

@@ -26,7 +26,7 @@ func NewProject(app app.Application) *ProjectHandler {
 // @Param request body command.CreateProjectCommand true "Project to create"
 // @Success 201 {object} any
 // @Failure 400 {object} any
-// @Router /projects [post]
+// @Router /api/v1/projects [post]
 func (h *ProjectHandler) CreateProject(c *gin.Context) {
 	var cmd command.CreateProjectCommand
 	if err := c.ShouldBindBodyWithJSON(&cmd); err != nil {
@@ -51,7 +51,7 @@ func (h *ProjectHandler) CreateProject(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} any
 // @Failure 400 {object} any
-// @Router /projects [get]
+// @Router /api/v1/projects [get]
 func (h *ProjectHandler) FindAllProjects(c *gin.Context) {
 	views, err := h.app.Queries.FindAllProjects.Handle()
 	if err != nil {

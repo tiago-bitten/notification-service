@@ -1,9 +1,11 @@
 package command
 
-import "github.com/tiago-bitten/notification-service/internal/project/domain/project"
+import (
+	"github.com/tiago-bitten/notification-service/internal/project/domain/project"
+)
 
 type CreateProjectCommand struct {
-	Name string
+	Name string `json:"name"`
 }
 
 type CreateProjectHandler struct {
@@ -17,8 +19,17 @@ func NewCreateProjectHandler(projectRepo project.Repository) *CreateProjectHandl
 }
 
 func (h *CreateProjectHandler) Handle(cmd CreateProjectCommand) (string, error) {
-	p := project.NewProject(cmd.Name)
-	err := h.projectRepo.Save(p)
+	p, err := h.projectRepo.FindByName(cmd.Name)
+	if err != nil {
+		return "", err
+	}
 
-	return p.Key, err
+	if p != nil {
+		return "", project.ErrProjectNameInUse
+	}
+
+	newProject := project.NewProject(cmd.Name)
+	err = h.projectRepo.Save(newProject)
+
+	return newProject.Key, err
 }

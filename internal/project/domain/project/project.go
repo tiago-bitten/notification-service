@@ -2,8 +2,8 @@ package project
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"math/rand"
 	"strings"
 	"time"
 )
@@ -24,12 +24,7 @@ func NewProject(name string) *Project {
 	}
 }
 
-var rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
-
 func generateKey(projectName string) string {
-	var b strings.Builder
-	for i := 0; i < 15; i++ {
-		b.WriteByte('0' + byte(rnd.Intn(10)))
-	}
-	return fmt.Sprintf("%s%s", projectName, b.String())
+	id := strings.ReplaceAll(uuid.New().String(), "-", "")
+	return fmt.Sprintf("%s%s", projectName, id)
 }

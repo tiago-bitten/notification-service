@@ -28,22 +28,16 @@ func NewProject(app app.Application) *ProjectHandler {
 // @Failure 400 {object} any
 // @Router /projects [post]
 func (h *ProjectHandler) CreateProject(c *gin.Context) {
-	var req struct {
-		Name string `json:"name"`
-	}
-
-	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
+	var cmd command.CreateProjectCommand
+	if err := c.ShouldBindBodyWithJSON(&cmd); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
-	}
-
-	cmd := command.CreateProjectCommand{
-		Name: req.Name,
 	}
 
 	key, err := h.app.Commands.CreateProject.Handle(cmd)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	c.Status(http.StatusCreated)

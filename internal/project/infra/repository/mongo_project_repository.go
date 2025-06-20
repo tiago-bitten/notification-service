@@ -65,3 +65,18 @@ func (r *MongoProjectRepository) FindByName(name string) (*project.Project, erro
 	}
 	return &p, nil
 }
+
+func (r *MongoProjectRepository) FindByKey(key string) (*project.Project, error) {
+	ctx, cancel := sharedMongo.WithTimeout()
+	defer cancel()
+
+	var p project.Project
+	found, err := sharedMongo.FindOneDocument(ctx, r.collection, bson.M{"key": key}, &p)
+	if err != nil {
+		return nil, err
+	}
+	if !found {
+		return nil, nil
+	}
+	return &p, nil
+}

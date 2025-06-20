@@ -5,4 +5,5 @@ type Repository interface {
 	FindAll() ([]Project, error)
 	FindByID(id string) (*Project, error)
 	FindByName(name string) (*Project, error)
+	FindByKey(key string) (*Project, error)
 }

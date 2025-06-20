@@ -9,18 +9,18 @@ import (
 )
 
 type Project struct {
-	ID       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Name     string             `json:"name" bson:"name"`
-	Key      string             `json:"key" bson:"key"`
-	CreateAt time.Time          `json:"create_at" bson:"create_at"`
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name      string             `json:"name" bson:"name"`
+	Key       string             `json:"key" bson:"key"`
+	CreatedAt time.Time          `json:"created_at" bson:"created_at"`
 }
 
 func NewProject(name string) *Project {
 	return &Project{
-		ID:       primitive.NewObjectID(),
-		Name:     name,
-		Key:      generateKey(name),
-		CreateAt: time.Now(),
+		ID:        primitive.NewObjectID(),
+		Name:      name,
+		Key:       generateKey(name),
+		CreatedAt: time.Now(),
 	}
 }
 

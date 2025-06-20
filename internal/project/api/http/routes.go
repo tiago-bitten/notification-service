@@ -5,9 +5,9 @@ import (
 	"github.com/tiago-bitten/notification-service/internal/project/app"
 )
 
-func RegisterRoutes(router *gin.Engine, app app.Application) {
+func RegisterProjectRoutes(g *gin.RouterGroup, app app.Application) {
 	handler := NewProject(app)
 
-	router.POST("/projects", handler.CreateProject)
-	router.GET("/projects", handler.FindAllProjects)
+	g.POST("/projects", handler.CreateProject)
+	g.GET("/projects", handler.FindAllProjects)
 }

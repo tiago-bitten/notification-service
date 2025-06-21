@@ -1,41 +1,35 @@
 package notification
 
-func NewNotification(id string, title string, body string, type_ NotificationType, users []User) *Notification {
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
+func NewNotification(
+	title string,
+	body string,
+	type_ Type,
+	projectKey string,
+	users []User) *Notification {
 	return &Notification{
-		ID:    id,
-		Title: title,
-		Body:  body,
-		Type:  type_,
-		Users: users,
+		Title:      title,
+		Body:       body,
+		Type:       type_,
+		ProjectKey: projectKey,
+		Users:      users,
 	}
 }
 
 type Notification struct {
-	ID    string
-	Title string
-	Body  string
-	Type  NotificationType
-	Users []User
+	ID         primitive.ObjectID `json:"id" bson:"_id, omitempty "`
+	Title      string             `json:"title" bson:"title"`
+	Body       string             `json:"body" bson:"body"`
+	Type       Type               `json:"type" bson:"type"`
+	ProjectKey string             `json:"project_key" bson:"project_key"`
+	Users      []User             `json:"users" bson:"users"`
 }
 
-type NotificationType string
+type Type string
 
 const (
-	NotificationTypeEmail NotificationType = "email"
-	NotificationTypeSMS   NotificationType = "sms"
-	NotificationTypePush  NotificationType = "push"
+	NotificationTypeEmail Type = "email"
+	NotificationTypeSMS   Type = "sms"
+	NotificationTypePush  Type = "push"
 )
-
-func NewUser(id string, name string, channel string) *User {
-	return &User{
-		ID:      id,
-		Name:    name,
-		Channel: channel,
-	}
-}
-
-type User struct {
-	ID      string
-	Name    string
-	Channel string
-}

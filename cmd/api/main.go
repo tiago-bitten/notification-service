@@ -6,7 +6,11 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "github.com/tiago-bitten/notification-service/docs"
+	notificationHttp "github.com/tiago-bitten/notification-service/internal/notification/api/http"
+	notificationService "github.com/tiago-bitten/notification-service/internal/notification/service"
+	"github.com/tiago-bitten/notification-service/internal/project/infra/repository"
 	"github.com/tiago-bitten/notification-service/internal/shared/config"
+	"github.com/tiago-bitten/notification-service/internal/shared/http/middleware"
 
 	projectHttp "github.com/tiago-bitten/notification-service/internal/project/api/http"
 	projectService "github.com/tiago-bitten/notification-service/internal/project/service"
@@ -29,17 +33,19 @@ func main() {
 
 	db := client.Database(appConfig.Database)
 
+	notificationApp := notificationService.NewApplication(db)
 	projectApp := projectService.NewApplication(db)
-	// projectRepo := repository.NewMongoProjectRepository(db)
+	projectRepo := repository.NewMongoProjectRepository(db)
 
-	// projectAuthMiddleware := middleware.NewProjectAuthMiddleware(projectRepo)
+	projectAuthMiddleware := middleware.NewProjectAuthMiddleware(projectRepo)
 	// fixedTokenAuthMiddleware := middleware.NewFixedTokenAuthMiddleware(appConfig.FixedAuthToken)
 
 	r := gin.Default()
 	// public := r.Group("/api/v1")
 
-	// projectProtectedGroup := r.Group("/api/v1")
-	// projectProtectedGroup.Use(projectAuthMiddleware.Handle())
+	projectProtectedGroup := r.Group("/api/v1")
+	projectProtectedGroup.Use(projectAuthMiddleware.Handle())
+	notificationHttp.RegisterNotificationRoutes(projectProtectedGroup, notificationApp)
 
 	adminGroup := r.Group("/api/v1")
 	// adminGroup.Use(fixedTokenAuthMiddleware.Handle())
